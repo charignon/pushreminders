@@ -1,0 +1,50 @@
+* Reminder-server
+
+** Installation 
+
+*** 1) Clone this repo
+
+*** 2) Set up a systemd service, in `~/.config/user/systemd/reminder.service`
+#+BEGIN_SRC systemd
+[Unit]
+Description=Reminder Server
+
+[Service]
+Type=simple
+WorkingDirectory=/home/laurent/repos/reminder-server
+ExecStart=/usr/bin/lein run
+ExecReload=/bin/kill -HUP $MAINPID
+EnvironmentFile=/home/laurent/.config/pushover.conf
+
+[Service]
+KillMode=process
+Restart=on-failure
+StartLimitBurst=3
+StartLimitInterval=60s
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+#+END_SRC
+
+And the env file at `~/.config/pushover.conf`:
+
+#+BEGIN_SRC env
+pushover_tok=xxx
+pushover_key=xxx
+#+END_SRC
+
+*** 3) Copy the reminders.el file in your emacs installation
+*** 4) Point to it and configure emacs to call it on save on your reminders file
+
+#+BEGIN_SRC emacs-lisp
+(push "/home/laurent/.emacs.d/private/laurent" load-path)
+(autoload 'laurent/do-sync-reminders "reminders" "Sync reminders to a server" t nil)
+(autoload 'laurent/remindme "reminders" "Insert reminder snippet from current schedule" t nil)
+
+(defun sync-reminders ()
+  (when (string= buffer-file-name "/home/laurent/reminders.org")
+    (laurent/do-sync-reminders)))
+
+(add-hook 'after-save-hook #'sync-reminders)
+#+END_SRC
