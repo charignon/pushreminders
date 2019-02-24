@@ -59,6 +59,7 @@
 \(pushreminders-format-date <2019-02-13 Wed>\) => [2019-02-13 Wed 10:00]"
   (replace-regexp-in-string "<\\(.*\\)>" "[\\1 10:00]" d))
 
+;;;###autoload
 (defun pushreminders-add-reminder-at-point()
   "Add a reminder at point.
 Need to be on a scheduled entry"
@@ -100,15 +101,12 @@ Need to be on a scheduled entry"
       (json-pretty-print-buffer)
       (write-file fn))))
 
+;;;###autoload
 (defun pushreminders-sync-reminders ()
   "Sync reminders in current buffer to the server."
   (interactive)
   (message "Exporting reminders")
-  (pushreminders-write-reminders pushreminders-reminders-file)
-  (message "Copy reminders on server")
-  (shell-command-to-string
-   (format "curl %s" pushreminders-host))
-  (message "Synced reminders"))
+  (pushreminders-write-reminders pushreminders-reminders-file))
 
 (provide 'pushreminders)
 ;;; pushreminders.el ends here

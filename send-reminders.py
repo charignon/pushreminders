@@ -12,7 +12,7 @@ import urllib
 from dateutil import parser
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-EXPECTED_ENV_VARIABLES = ["pushover_tok", "pushover_key", "reminders_files"]
+EXPECTED_ENV_VARIABLES = ["pushover_tok", "pushover_key", "reminders_file"]
 
 class Reminder:
     """A Reminder as exported by the emacs extension"""
@@ -70,8 +70,9 @@ def validate_env_or_die(keys):
 def main():
     validate_env_or_die(EXPECTED_ENV_VARIABLES)
     pushover_send("Reminder server started")
-    reminders = read_reminders(os.environ["reminders_file"], cutoff_time=datetime.datetime.now())
-    logging.debug(f"Read: {len(reminders)} reminders from {REMINDERS_FILE}")
+    filename = os.environ["reminders_file"]
+    reminders = read_reminders(filename, cutoff_time=datetime.datetime.now())
+    logging.debug(f"Read: {len(reminders)} reminders from {filename}")
     while reminders:
         next_reminder = reminders.pop()
         logging.debug(f"Next reminder: \n{next_reminder}")
