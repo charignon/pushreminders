@@ -69,7 +69,6 @@ def validate_env_or_die(keys):
 
 def main():
     validate_env_or_die(EXPECTED_ENV_VARIABLES)
-    pushover_send("Reminder server started")
     filename = os.environ["reminders_file"]
     reminders = read_reminders(filename, cutoff_time=datetime.datetime.now())
     logging.debug(f"Read: {len(reminders)} reminders from {filename}")
