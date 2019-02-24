@@ -8,7 +8,7 @@
 We set up a systemd service and a watcher to reload it whenever the reminder
 file changes.
 
-In `~/.config/user/systemd/reminder.service`:
+In =~/.config/user/systemd/reminder.service=:
 #+BEGIN_SRC systemd
 [Unit]
 Description=Reminder Server
@@ -34,7 +34,7 @@ WantedBy=default.target
 
 A watch and watcher service
 
-in `reminder-watcher.service`:
+in =reminder-watcher.service=:
 #+BEGIN_SRC systemd
 [Unit]
 Description=reminder restarter
@@ -48,7 +48,7 @@ ExecStart=/usr/bin/systemctl restart reminder.service
 WantedBy=multi-user.target
 #+END_SRC
 
-and in `reminder-watcher.path`:
+and in =reminder-watcher.path=:
 #+BEGIN_SRC systemd
 [Path]
 PathModified=/home/laurent/Documents/reminders.json
@@ -57,12 +57,20 @@ PathModified=/home/laurent/Documents/reminders.json
 WantedBy=multi-user.target
 #+END_SRC
 
-And the env file at `~/.config/pushover.conf`:
+And the env file at =~/.config/pushover.conf=:
 
 #+BEGIN_SRC env
 pushover_tok=xxx
 pushover_key=xxx
 reminders_file=xxx
+#+END_SRC
+
+Load everything
+#+BEGIN_SRC shell
+sudo systemctl enable ~/.config/systemd/user/reminder-watcher.path
+sudo systemctl enable ~/.config/systemd/user/reminder.service
+sudo systemctl start reminder.service
+sudo systemctl start reminder-watcher.path
 #+END_SRC
 
 *** 3) Install the emacs extension using QUELPA
